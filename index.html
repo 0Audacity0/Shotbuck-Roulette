@@ -1371,7 +1371,7 @@ html.mobile #voicePanel.inCard{top:auto;right:max(8px,env(safe-area-inset-right)
   <div id="topLeftBar">
    <button aria-label="What's New" class="ghost" id="btnWhatsNew" title="What's New" type="button"><svg aria-hidden="true" fill="none" height="22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" width="22"><path d="M4 5h13v14H6a2 2 0 0 1-2-2z"/><path d="M17 9h3v8a2 2 0 0 1-2 2h-1"/><path d="M7 8.5h7M7 12h7M7 15.5h4"/></svg><span id="wnBadge">!</span></button>
    <button aria-label="Project Hub" class="ghost" id="btnHub" title="Project Hub" type="button"><svg aria-hidden="true" fill="none" height="22" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewBox="0 0 24 24" width="22"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
-   <div id="versionNumber" aria-label="Version 2.7.0">v2.7.0</div>
+   <div id="versionNumber" aria-label="Version 2.7.9">v2.7.9</div>
   </div>
   <div id="hubPanel">
    <div id="hubCard">
@@ -1382,17 +1382,22 @@ html.mobile #voicePanel.inCard{top:auto;right:max(8px,env(safe-area-inset-right)
   </div>
   <div id="whatsNewPanel">
    <div id="whatsNewCard">
-    <h2>WHAT'S NEW IN v2.7.0</h2>
+    <h2>WHAT'S NEW IN v2.7.9</h2>
+    <ul>
+     <li><b>Added Rematch Voting:</b> rematch after playing a game idk the thing should be self explanatory </li>
+     <li><b>Added Invisible Inventory Fun Setting:</b> people cant see your inventory and you cant see others, its simple </li> 
+     <li><b>Added Player Profiles:</b> click player names to view wins, games played, favorite item, most used 'skin', winstreaks, and achievements </li>
+     <li><b>Added Lobby Announcements:</b> hosts can now send a message to people in the lobby </li>
+     <li><b>Added Ready Up Button:</b> every nonspectating player, including the host, must press 'ready' before the match can start </li>
+     <li><b>Added Statistics Page:</b> seperate more detailed singleplayer and multiplayer stats </li>
+     <li><b>Added Rare Hats (yayyy):</b> added 3 new hats </li>
+     <li><b>(I also fixed SO many bugs, I would list them off but there were too many)</b> </li>
+    </ul>
+    <h3>EARLIER (v2.7.0)</h3>
     <ul>
      <li><b>Added NEW map:</b> turns the old map into the pub, there's also an option to switch back to the old map if you wan't</li>
      <li><b>Added background characters:</b> added people that look like The Dealer, and added a bartender with a low chance of throwing beers at you </li>
      <li><b>Updated (non family-friendly) death effect:</b> when The Dealer dies hands drag him down below </li>
-    </ul>
-    <h3>EARLIER (v2.6.0)</h3>
-    <ul>
-     <li><b>Added VoiceChat for multiplayer:</b> yeahhhh talk to yo frienddsss </li>
-     <li><b>Added NEW button:</b> Takes you to my Project Hub </li>
-     <li><b>Fixed pause menu:</b> Almost everything in it was broken, I don't know why or how it was broken </li>
     </ul>
     <button class="ghost" id="btnCloseWhatsNew" type="button">CLOSE</button>
    </div>
@@ -8737,7 +8742,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         { id: 'witch', name: 'Witch Hat', price: 1000, c1: 0x4a2a6e, c2: 0x1a0e2a, c3: 0xffd24a },
         { id: 'crown', name: 'Crown', price: 100000, c1: 0xffd24a, c2: 0xd01c3c, c3: 0xffd24a },
         {id:'astral_crown',name:'Astral Sovereign',rare:true,unlock:'Win 100 multiplayer matches',c1:0x8b5cff,c2:0x27e8ff,c3:0xffe28a},
-        {id:'void_halo',name:'Event Horizon',rare:true,unlock:'Reach a 25-win multiplayer streak',c1:0x160d35,c2:0xb36bff,c3:0x50eaff},
+        {id:'void_halo',name:'Event Horizon',rare:true,unlock:'Reach a 25 win multiplayer streak',c1:0x160d35,c2:0xb36bff,c3:0x50eaff},
         {id:'golden_dealer',name:'The Golden Dealer',rare:true,unlock:'Unlock every achievement',c1:0xffd24a,c2:0x9b5b16,c3:0xffffff}
     ];
     MP.hats = {};
