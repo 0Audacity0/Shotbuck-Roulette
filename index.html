@@ -8021,7 +8021,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         await sleep(700);
         const win = winId === MP.pid;
         { const ms=SAVE.mpStats||(SAVE.mpStats={games:0,wins:0,losses:0,streak:0,best:0,rounds:0,items:0,shots:0,hits:0}); ms.games++; if(win){ms.wins++;ms.streak++;ms.best=Math.max(ms.best,ms.streak);}else{ms.losses++;ms.streak=0;} persist(); mpRecordProfile(!!win); }
-        $('#card').innerHTML = `<h1 style="color:${win ? '#ffd24a' : '#b02020'}">${win ? 'YOU WIN' : 'MATCH OVER'}</h1><h2 id="mpWinner"></h2><p style="text-align:center">Would everyone like to play again?</p><div id="mpRematchStatus" class="mpNote" style="text-align:center">0/${MP.players.filter(p=>!p.spectator).length} votes received</div><button id="btnRematchYes">VOTE YES · REMATCH</button><button class="ghost" id="btnRematchNo">VOTE NO</button><button class="ghost" id="btnTitle">QUIT TO TITLE SCREEN</button>`;
+        $('#card').innerHTML = `<h1 style="color:${win ? '#ffd24a' : '#b02020'}">${win ? 'YOU WIN' : 'MATCH OVER'}</h1><h2 id="mpWinner"></h2><p style="text-align:center">Do you wanna play again yo</p><div id="mpRematchStatus" class="mpNote" style="text-align:center">0/${MP.players.filter(p=>!p.spectator).length} votes received</div><button id="btnRematchYes">VOTE YES · REMATCH</button><button class="ghost" id="btnRematchNo">VOTE NO</button><button class="ghost" id="btnTitle">QUIT TO TITLE SCREEN</button>`;
         $('#mpWinner').textContent = (winId ? S.P[winId].name.toUpperCase() : 'NOBODY') + ' IS THE LAST ONE STANDING';
         $('#overlay').style.display = 'flex'; MP.rematchVotes={};
         $('#btnRematchYes').onclick=()=>mpVoteRematch(true); $('#btnRematchNo').onclick=()=>mpVoteRematch(false);
