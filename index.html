@@ -7100,7 +7100,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             .on('postgres_changes', { event: '*', schema: 'public', table: 'mp_look', filter: f }, p => { if (p && p.new) mpLookRow(p.new); })
             .on('postgres_changes', { event: '*', schema: 'public', table: 'mp_skins', filter: f }, p => { if (p && p.new) mpSkinRow(p.new); })
             .on('broadcast', { event: 'flags' }, m => { const d = m && m.payload; if (d && d.pid && d.f) { MP.gone.delete(d.pid); MP.flags[d.pid] = { god: !!d.f.god, peek: !!d.f.peek, stocked: !!d.f.stocked }; mpSendFlagsBack(d.pid); } })
-            .on('broadcast', { event: 'hat' }, m => { const d = m && m.payload; if (d && d.pid && d.pid !== MP.pid) MP.hats[d.pid] = HATS.some(h => h.id === d.hat) ? d.hat : ''; })
+            .on('broadcast', { event: 'hat' }, m => { const d = m && m.payload; if (d && d.pid && d.pid !== MP.pid) MP.hats[d.pid] = HATS.some(h => h.id === d.hat) ? d.hat : ''; if (MP.S) mpHUD(); })
             .on('broadcast', { event: 'quit' }, m => { const d = m && m.payload; if (d && d.pid && d.pid !== MP.pid) { MP.gone.add(d.pid); mpRenderRoom(); } })
             .on('broadcast', { event: 'react' }, m => { const d = m && m.payload; if (d && d.pid && d.pid !== MP.pid) showReaction(d.name, d.kind, false); })
             .subscribe(st => { if ((st === 'CHANNEL_ERROR' || st === 'TIMED_OUT') && MP.code) mpFault('Live multiplayer connection failed', st); if (st === 'SUBSCRIBED') { mpSendFlags(); if (MP.skin.color || MP.skin.face) mpSendSkin(false); mpSendHat(); if (MP.host && Object.values(MP.fun).some(v => v === true)) setTimeout(() => mpSend('funconfig', MP.fun), 350); } });
@@ -8632,7 +8632,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             box.innerHTML = '';
             data.forEach(r => {
                 const row = document.createElement('div');
-                row.className = 'mpPubRow' + (h.rare?' rareHat':'');
+                row.className = 'mpPubRow';
                 const info = document.createElement('span');
                 info.textContent = (r.host_name || 'Host') + "'s lobby";
                 const sm = document.createElement('small');
@@ -8671,6 +8671,8 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
     $('#mpMTabPlay').onclick = () => mpMenuTab('play');
     $('#mpMTabSkin').onclick = () => mpMenuTab('skin');
     $('#mpRefresh').onclick = mpLoadPublic;
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && $('#mpLobby').style.display !== 'none' && $('#mpMenu').style.display !== 'none') mpLoadPublic(); });
+    window.addEventListener('focus', () => { if ($('#mpLobby').style.display !== 'none' && $('#mpMenu').style.display !== 'none') mpLoadPublic(); });
     function mpUiSync() {
         const lob = $('#mpLobby'), lobOpen = lob && lob.style.display !== 'none';
         document.body.classList.toggle('inLobby', !!MP.code || lobOpen);
@@ -8820,6 +8822,32 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             add(new THREE.SphereGeometry(.04, 10, 8), m2, 0, .25, .27);
             add(new THREE.SphereGeometry(.03, 10, 8), blue, -.13, .25, .235);
             add(new THREE.SphereGeometry(.03, 10, 8), blue, .13, .25, .235);
+        }
+        else if (id === 'astral_crown') {
+            const glow = mat(0x27e8ff, { emissive: 0x27e8ff, emissiveIntensity: .65, metalness: .55, roughness: .25 });
+            const violet = mat(0x8b5cff, { emissive: 0x32106f, emissiveIntensity: .35, metalness: .55, roughness: .25 });
+            add(new THREE.TorusGeometry(.43, .035, 10, 48), glow, 0, .25, 0).rotation.x = Math.PI / 2;
+            add(new THREE.TorusGeometry(.32, .018, 8, 40), violet, 0, .31, 0).rotation.x = Math.PI / 2;
+            for (let i=0;i<12;i++) { const a=i*Math.PI/6, r=.43, h=i%2===0?.34:.22; add(new THREE.ConeGeometry(.055,h,5),violet,Math.sin(a)*r,.27+h/2,Math.cos(a)*r).rotation.z=-Math.sin(a)*.35; }
+            add(new THREE.OctahedronGeometry(.105), mat(0xffe28a,{emissive:0xffb52e,emissiveIntensity:.8,metalness:.5}), 0,.52,0);
+        }
+        else if (id === 'void_halo') {
+            const dark = mat(0x160d35,{emissive:0x3b0870,emissiveIntensity:.55,metalness:.4,roughness:.2});
+            const purple = mat(0xb36bff,{emissive:0x7020ff,emissiveIntensity:1.2,roughness:.2});
+            const cyan = mat(0x50eaff,{emissive:0x168cff,emissiveIntensity:.8,roughness:.2});
+            add(new THREE.TorusGeometry(.48,.045,10,56),purple,0,.39,0).rotation.x=Math.PI/2;
+            add(new THREE.TorusGeometry(.36,.018,8,48),cyan,0,.39,0).rotation.x=Math.PI/2;
+            add(new THREE.SphereGeometry(.16,16,12),dark,0,.39,0);
+            for(let i=0;i<8;i++){const a=i*Math.PI/4;add(new THREE.SphereGeometry(.035,8,6),cyan,Math.sin(a)*.48,.39,Math.cos(a)*.48);}
+        }
+        else if (id === 'golden_dealer') {
+            const gold = mat(0xffd24a,{metalness:.8,roughness:.18,emissive:0x8a4b00,emissiveIntensity:.45});
+            const white = mat(0xffffff,{metalness:.35,roughness:.15,emissive:0xffd24a,emissiveIntensity:.25});
+            add(CY(.42,.42,.07,32),gold,0,.24,0);
+            for(let i=0;i<7;i++){const a=i*Math.PI/3;const h=i%2===0?.42:.28;add(new THREE.ConeGeometry(.09,h,4),gold,Math.sin(a)*.32,.28+h/2,Math.cos(a)*.32);}
+            add(new THREE.ConeGeometry(.13,.5,5),gold,0,.61,0);
+            add(new THREE.SphereGeometry(.075,12,8),white,0,.89,0);
+            add(new THREE.TorusGeometry(.43,.018,6,40),white,0,.27,0).rotation.x=Math.PI/2;
         }
         return g;
     }
