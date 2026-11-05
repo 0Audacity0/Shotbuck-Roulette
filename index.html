@@ -1500,7 +1500,7 @@ html.mobile #voicePanel.inCard{top:auto;right:max(8px,env(safe-area-inset-right)
     </h3>
     <div id="tStatRows">
     </div>
-    <button class="ghost" id="btnAch" type="button" style="margin-top:12px;width:100%">ACHIEVEMENTS</button>
+    <button class="ghost" id="btnStats" type="button" style="margin-top:12px;width:100%">DETAILED STATISTICS</button><button class="ghost" id="btnAch" type="button" style="margin-top:8px;width:100%">ACHIEVEMENTS</button>
    </div>
    <form autocomplete="off" id="tCode">
     <input autocapitalize="off" autocomplete="off" id="codeIn" maxlength="30" placeholder="Enter Code" spellcheck="false"/>
@@ -1747,8 +1747,11 @@ html.mobile #voicePanel.inCard{top:auto;right:max(8px,env(safe-area-inset-right)
      </div>
      <div id="mpList">
      </div>
-     <div id="mpWait">
-     </div>
+     <div id="mpWait"></div>
+     <button class="ghost" id="mpReady" type="button" style="width:100%;margin-top:8px">READY</button>
+     <div class="mpSep">HOST ANNOUNCEMENT</div>
+     <div id="mpAnnounceHost" style="display:none"><div class="mpRow"><input class="mpInput" id="mpAnnouncementInput" maxlength="120" placeholder="Message for everyone"/><button id="mpAnnouncementSend" type="button">SEND</button></div></div>
+     <div id="mpAnnouncementFeed" class="mpNote" aria-live="polite"></div>
      <div id="mpMapRow" style="display:none"><div class="mpSep">MAP</div><div class="mapPick"><button id="mpMapPub" type="button">PUB</button><button id="mpMapOld" type="button">OLD MAP</button></div></div>
      <button id="mpStart" type="button">
       START MATCH
@@ -1768,6 +1771,7 @@ html.mobile #voicePanel.inCard{top:auto;right:max(8px,env(safe-area-inset-right)
       <label class="funOption"><span><b>GIANT PLAYERS</b><small>Everyone's figure becomes 1.5x bigger</small></span><input id="funGiant" type="checkbox"/></label>
       <label class="funOption"><span><b>TINY PLAYERS</b><small>Everyone's figure becomes smaller (Giant wins if both are on)</small></span><input id="funTiny" type="checkbox"/></label>
       <label class="funOption"><span><b>ENDLESS MATCH</b><small>Keep the multiplayer match going by restarting a fresh round after a winner.</small></span><input id="funEndless" type="checkbox"/></label>
+      <label class="funOption"><span><b>INVISIBLE INVENTORY</b><small>Hide every other player’s carried items from your view.</small></span><input id="funInvisibleInventory" type="checkbox"/></label>
       <label class="funOption"><span><b>MULTIPLAYER ITEM SHUFFLING</b><small>Occasionally move items between living players at the start of a round.</small></span><input id="funItemShuffle" type="checkbox" checked/></label>
       <label class="funOption"><span><b>LOTS O' SHAKE</b><small>Hits shake every screen hard.</small></span><input id="funMegaShake" type="checkbox"/></label>
       <div class="funSlider"><label for="funPower">BOUNCE POWER <b id="funPowerVal">1.5×</b></label><input id="funPower" type="range" min="0.1" max="20" step="0.1" value="1.5"/></div>
@@ -1788,7 +1792,7 @@ html.mobile #voicePanel.inCard{top:auto;right:max(8px,env(safe-area-inset-right)
       <div class="mpNote">Everyone in the lobby and match sees your color and face.</div>
       <div class="mpSep">HATS</div>
       <div class="mpNote">Bank: <b id="hatBank">$0</b>. Everyone in the match sees the hat you wear.</div>
-      <div id="hatList"></div>
+      <details open class="hatGroup"><summary>REGULAR HATS</summary><div id="hatList"></div></details><details class="hatGroup rareHatGroup"><summary>✦ RARE HATS ✦</summary><div class="mpNote">Extremely rare rewards. These are earned through achievements, not purchased.</div><div id="rareHatList"></div></details>
      </div>
     </div>
     <div id="mpMsg">
@@ -1806,6 +1810,8 @@ html.mobile #voicePanel.inCard{top:auto;right:max(8px,env(safe-area-inset-right)
   </div>
   <div class="panel" id="mpPick">
   </div>
+  <div id="profileModal" class="modal" style="display:none;position:fixed;inset:0;z-index:90;background:#000d;align-items:center;justify-content:center;padding:16px"><div class="panel" style="width:min(440px,100%);max-height:85vh;overflow:auto"><h2 id="profileTitle">PLAYER PROFILE</h2><div id="profileBody" class="mpNote">Loading profile…</div><button class="ghost" id="profileClose" type="button" style="width:100%;margin-top:12px">CLOSE</button></div></div>
+  <div id="statsModal" class="modal" style="display:none;position:fixed;inset:0;z-index:90;background:#000d;align-items:center;justify-content:center;padding:16px"><div class="panel" style="width:min(520px,100%);max-height:88vh;overflow:auto"><h2>STATISTICS</h2><div class="mpTabs"><button id="statsSoloTab" class="on" type="button">SINGLE PLAYER</button><button id="statsMultiTab" type="button">MULTIPLAYER</button></div><div id="statsPageBody"></div><button class="ghost" id="statsClose" type="button" style="width:100%;margin-top:12px">CLOSE</button></div></div>
   <div id="flash">
   </div>
   <div id="hurt">
@@ -1891,6 +1897,8 @@ html.mobile body.inLobby #btnWho,html.mobile body.inLobby #whoPanel{display:none
 html.mobile #btnPanel{top:calc(max(12px,env(safe-area-inset-top)) + 62px);left:calc(max(12px,env(safe-area-inset-left)) + 170px);bottom:auto;min-height:44px}
 html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:none!important}
 @media (prefers-reduced-motion:reduce){#warnBar .wbHead,#warnBar::after,#wbDealer{animation:none}}
+
+  .hatGroup{border:1px solid #51452e;margin:8px 0;padding:8px;background:#090806}.hatGroup summary{cursor:pointer;color:#ffd24a;letter-spacing:.16em;font-size:12px;padding:5px}.rareHatGroup{border-color:#9a72ff;box-shadow:inset 0 0 18px #8a4fff22}.rareHatGroup summary{color:#d7b7ff;text-shadow:0 0 9px #a65cff}.rareHat{border:1px solid #a56aff!important;background:linear-gradient(110deg,#21132f,#10101c 55%,#302047)!important;box-shadow:0 0 12px #9a55ff33}.rareHat b{color:#e7c8ff}.profileName{cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px}.profileName:hover{color:#ffd24a}
   </style>
   <style>
     #playModePanel .runChoiceButtons { display:flex; flex-direction:column; gap:14px; }
@@ -2033,7 +2041,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
     const FAMILY_KEY = 'lastshell_family_friendly_v1';
     function defaultSave() {
         return { bank: 150, hats: [], hat: '', stash: [], ach: {}, beat: {}, admin: false, codesUnlocked: false, stockedActive: false, cheats: { god: false, quick: false, peek: false, solo: false, family: false, party: false, retro: false, fps: false },
-            stats: { games: 0, wins: 0, losses: 0, rounds: 0, shots: 0, hits: 0, selfBlanks: 0, damageTaken: 0, items: 0, earned: 0, streak: 0, best: 0 } };
+            stats: { games: 0, wins: 0, losses: 0, rounds: 0, shots: 0, hits: 0, selfBlanks: 0, damageTaken: 0, items: 0, earned: 0, streak: 0, best: 0 }, mpStats: {games:0,wins:0,losses:0,streak:0,best:0,rounds:0,items:0,shots:0,hits:0}, itemUse: {} };
     }
     function loadSave() {
         const d = defaultSave();
@@ -3421,7 +3429,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         if (!(w === 'p' && SAVE.admin))
             P.items[i] = null;
         if (w === 'p' && G.statsOn) {
-            SAVE.stats.items++;
+            SAVE.stats.items++; SAVE.itemUse = SAVE.itemUse || {}; SAVE.itemUse[t] = (SAVE.itemUse[t]||0)+1;
             G.runItems = (G.runItems || 0) + 1;
             persist();
         }
@@ -4001,7 +4009,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         peek: () => { SAVE.cheats.peek = !SAVE.cheats.peek; return 'Peek ' + onOff(SAVE.cheats.peek) + (SAVE.cheats.peek ? ': the chamber is always shown.' : '.'); },
         resetstats: () => { SAVE.stats = defaultSave().stats; return 'Stats reset.'; },
         hatrack: () => { if (!Array.isArray(SAVE.hats)) SAVE.hats = []; HATS.forEach(h => { if (!SAVE.hats.includes(h.id)) SAVE.hats.push(h.id); }); return 'Every hat unlocked. Wear them from CUSTOMIZE in multiplayer.'; },
-        partytime: () => { SAVE.cheats.party = !SAVE.cheats.party; try { mpFunVisuals(); } catch (e) { } return 'Party time ' + onOff(SAVE.cheats.party) + '.'; },
+        partytime: () => { SAVE.cheats.party = !SAVE.cheats.party; try { mpFunVisuals(); if(MP.S){mpItemsKey='';mpSyncOtherItems();mpHUD();} } catch (e) { } return 'Party time ' + onOff(SAVE.cheats.party) + '.'; },
         jackpot: () => { const win = 1 + Math.floor(Math.random() * 1000); SAVE.bank += win; return 'Jackpot! +$' + win + ' added to your bank.'; },
         retro: () => { SAVE.cheats.retro = !SAVE.cheats.retro; applyVisualCodes(); return 'Retro mode ' + onOff(SAVE.cheats.retro) + '.'; },
         fps: () => { SAVE.cheats.fps = !SAVE.cheats.fps; applyVisualCodes(); return 'FPS counter ' + onOff(SAVE.cheats.fps) + '.'; },
@@ -5400,6 +5408,9 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         if (!a || SAVE.ach[id])
             return;
         SAVE.ach[id] = Date.now();
+        if (SAVE.mpStats && SAVE.mpStats.wins >= 100) unlockRareHat('astral_crown');
+        if (SAVE.mpStats && SAVE.mpStats.best >= 25) unlockRareHat('void_halo');
+        if (ACH.every(x => SAVE.ach[x.id] || x.id === id)) unlockRareHat('golden_dealer');
         persist();
         achQueue.push(a);
         achNext();
@@ -6649,7 +6660,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
     // players see the same game. The host is the only client that generates random shell loads.
     const MP_OK = !!SUPABASE_URL && !!SUPABASE_ANON_KEY && !/YOUR-PROJECT|YOUR-ANON/.test(SUPABASE_URL + SUPABASE_ANON_KEY);
     const MP = { sb: null, pid: null, name: '', code: null, host: false, hostId: null, players: [], spectatorJoin: false, ch: null, poll: 0, polling: false,
-        nextSeq: 1, buf: new Map(), chain: Promise.resolve(), pending: 0, started: false, over: false, busy: false, S: null, others: [], figs: {}, flags: {}, flagTimer: 0, look: {}, fun: {bouncy:false,pinball:false,spin:false,lowGravity:false,confetti:false,disco:false,rain:false,giant:false,tiny:false,megaShake:false,itemShuffle:true,power:1.5,duration:4} };
+        ready: {}, rematchVotes: {}, rematchRound: 0, profileCache: {}, nextSeq: 1, buf: new Map(), chain: Promise.resolve(), pending: 0, started: false, over: false, busy: false, S: null, others: [], figs: {}, flags: {}, flagTimer: 0, look: {}, fun: {bouncy:false,pinball:false,spin:false,lowGravity:false,confetti:false,disco:false,rain:false,giant:false,tiny:false,megaShake:false,itemShuffle:true,invisibleInventory:false,power:1.5,duration:4} };
     try { MP.pid = sessionStorage.getItem('lastshell_mp_pid'); } catch (e) { }
     if (!MP.pid) {
         MP.pid = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : 'p' + Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -7313,7 +7324,8 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             if (p) {
                 d.appendChild(skinBadge(p.player_id, p.seat));
                 const t = document.createElement('span');
-                t.textContent = `${i + 1}. ${p.name}${p.player_id === MP.pid ? ' (you)' : ''}${p.player_id === MP.hostId ? ' ★ host' : ''}`;
+                t.textContent = `${i + 1}. ${p.name}${p.player_id === MP.pid ? ' (you)' : ''}${p.player_id === MP.hostId ? ' ★ host' : ''} · ${p.ready ? 'READY' : 'NOT READY'}`;
+                t.className = 'profileName'; t.title = 'View player profile'; t.onclick = e => { e.stopPropagation(); mpOpenProfile(p.player_id, p.name); };
                 d.appendChild(t);
             }
             else
@@ -7325,11 +7337,29 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         syncMapButtons();
         const st = $('#mpStart');
         st.style.display = MP.host ? 'block' : 'none';
-        st.disabled = MP.players.length < 2;
+        st.disabled = MP.players.length < 2 || MP.players.some(p => !p.spectator && !p.ready);
+        const readyBtn = $('#mpReady'); if (readyBtn) { const mine = MP.players.find(p => p.player_id === MP.pid); readyBtn.textContent = mine && mine.ready ? '✓ READY — CLICK TO UNREADY' : 'READY'; readyBtn.classList.toggle('on', !!(mine && mine.ready)); }
+        const annHost = $('#mpAnnounceHost'); if (annHost) annHost.style.display = MP.host ? 'block' : 'none';
         const adminClose = $('#mpAdminCloseLobby');
         if (adminClose) adminClose.style.display = (SAVE.admin && MP.code) ? 'block' : 'none';
-        $('#mpWait').textContent = MP.host ? (MP.players.length < 2 ? 'Share the code, you need at least 2 players.' : 'Press "Start Match" to start the match if you have 2 or more people in the lobby.') : 'Waiting for the host to start the match…';
+        const readyCount = MP.players.filter(p => !p.spectator && p.ready).length; $('#mpWait').textContent = MP.players.filter(p=>!p.spectator).length < 2 ? 'Share the code, you need at least 2 players.' : `${readyCount}/${MP.players.filter(p=>!p.spectator).length} players ready. ${MP.host ? 'Everyone must be READY before you can start.' : 'Waiting for everyone to ready up and the host to start.'}`;
     }
+
+
+    // Lobby readiness and host announcements.
+    $('#mpReady').onclick = async () => { if (!MP.code || MP.started) return; const me=MP.players.find(p=>p.player_id===MP.pid); const next=!(me && me.ready); const {error}=await MP.sb.rpc('mp_set_ready',{p_code:MP.code,p_player:MP.pid,p_ready:next}); if(error) mpFault('Could not update ready status',error); else mpPoll(); };
+    $('#mpAnnouncementSend').onclick = async () => { const input=$('#mpAnnouncementInput'), text=input.value.trim(); if(!MP.host || !text) return; input.value=''; await mpSend('announce',{name:MP.name || 'HOST',text:text.slice(0,120)}); };
+    $('#profileClose').onclick=()=>$('#profileModal').style.display='none';
+    $('#statsClose').onclick=()=>$('#statsModal').style.display='none';
+    $('#btnStats').onclick=()=>{ $('#statsModal').style.display='flex'; renderDetailedStats('solo'); };
+    $('#statsSoloTab').onclick=()=>renderDetailedStats('solo'); $('#statsMultiTab').onclick=()=>renderDetailedStats('multi');
+    function renderDetailedStats(which){ const a=which==='solo', S=a?SAVE.stats:(SAVE.mpStats||{games:0,wins:0,losses:0,best:0,streak:0,rounds:0,items:0,shots:0,hits:0}); $('#statsSoloTab').classList.toggle('on',a); $('#statsMultiTab').classList.toggle('on',!a); const rows=a?[['Games played',S.games],['Wins',S.wins],['Losses',S.losses],['Win rate',S.games?Math.round(S.wins/S.games*100)+'%':'0%'],['Current streak',S.streak],['Best streak',S.best],['Rounds cleared',S.rounds],['Shots fired',S.shots],['Hits',S.hits],['Items used',S.items],['Money earned','$'+S.earned]]:[['Games played',S.games],['Wins',S.wins],['Losses',S.losses],['Win rate',S.games?Math.round(S.wins/S.games*100)+'%':'0%'],['Current streak',S.streak],['Best streak',S.best],['Rounds played',S.rounds],['Items used',S.items],['Shots fired',S.shots],['Hits',S.hits]]; $('#statsPageBody').innerHTML=rows.map(r=>`<div class="srow"><span>${r[0]}</span><b>${r[1]??0}</b></div>`).join(''); }
+    async function mpOpenProfile(pid,name){ $('#profileModal').style.display='flex'; $('#profileTitle').textContent=(name||'PLAYER')+' · PROFILE'; const body=$('#profileBody'); body.textContent='Loading profile…'; if(!MP.sb){body.textContent='Profiles require the multiplayer server.';return;} const {data,error}=await MP.sb.from('mp_player_profiles').select('*').eq('player_id',pid).maybeSingle(); if(error||!data){body.textContent='No profile statistics yet. Stats begin tracking after this update is installed.';return;} const ach=Array.isArray(data.achievements)?data.achievements.map(id=>{const a=ACH.find(x=>x.id===id);return a?a.name:id;}):[]; const rows=[['Total wins',data.total_wins],['Games played',data.games_played],['Favorite item',data.favorite_item||'—'],['Most-used skin',data.favorite_skin||'—'],['Win streak',data.current_streak],['Best win streak',data.best_streak],['Achievements',ach.length?ach.join(', '):'None recorded']]; body.innerHTML=rows.map(r=>`<div class="srow"><span>${r[0]}</span><b>${String(r[1]??0)}</b></div>`).join(''); }
+    async function mpRecordProfile(win){ if(!MP.sb||!MP.pid)return; const items={}; try{Object.entries(SAVE.itemUse||{}).forEach(([k,v])=>items[k]=v);}catch(e){} const skin=MP.skin.color||'Default'; const {error}=await MP.sb.rpc('mp_profile_record',{p_player:MP.pid,p_name:MP.name||'Player',p_win:!!win,p_item_counts:items,p_skin:skin,p_achievements:Object.keys(SAVE.ach||{}).filter(k=>SAVE.ach[k])}); if(error) console.warn('Profile stats not saved',error); else { SAVE.itemUse={}; persist(); } }
+    async function mpVoteRematch(yes){ if(MP.rematchVotes[MP.pid]!==undefined)return; $('#btnRematchYes').disabled=true; $('#btnRematchNo').disabled=true; await mpSend('rematch_vote',{yes:!!yes}); MP.rematchVotes[MP.pid]=!!yes; mpUpdateRematchUI(); if(MP.host) mpMaybeRematch(); }
+    function mpUpdateRematchUI(){ const el=$('#mpRematchStatus'); if(!el)return; const votes=Object.keys(MP.rematchVotes).length, total=MP.players.filter(p=>!p.spectator).length; el.textContent=`${votes}/${total} votes received · ${Object.entries(MP.rematchVotes).filter(x=>x[1]).length} want a rematch`; }
+    async function mpMaybeRematch(){ if(MP.rematchProcessing)return; const players=MP.players.filter(p=>!p.spectator); if(!players.length||players.some(p=>MP.rematchVotes[p.player_id]===undefined))return; const yes=players.every(p=>MP.rematchVotes[p.player_id]===true); if(!yes){$('#mpRematchStatus').textContent='Rematch declined. Return to the lobby to start another match.';return;} MP.rematchProcessing=true; const {error}=await MP.sb.rpc('mp_reset_lobby_for_rematch',{p_code:MP.code,p_player:MP.pid}); if(error){MP.rematchProcessing=false;mpMsg('Could not reset lobby for rematch: '+error.message,true);return;} await mpSend('rematch_start',{first:players[rand(0,players.length-1)].player_id}); }
+    async function mpResetForRematch(payload){ MP.rematchProcessing=false; MP.rematchVotes={}; MP.over=false; MP.started=false; MP.S=null; MP.busy=false; MP.buf.clear(); $('#overlay').style.display='none'; $('#mpLobby').style.display='flex'; showMpView('room'); mpSkinTab('lobby'); await mpPoll(); if(MP.host) setTimeout(()=>mpStartMatch(),500); }
 
     /* ----- multiplayer chat ----- */
     const chatEls = { btn: $('#chatBtn'), panel: $('#chatPanel'), msgs: $('#chatMsgs'), inp: $('#chatIn') };
@@ -7458,8 +7488,9 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
     $('#mpAdminCloseLobby').onclick = () => mpAdminCloseLobby(MP.code, false);
 
     async function mpStartMatch() {
-        if (!MP.host || MP.started)
-            return;
+        if (!MP.host || MP.started) return;
+        await mpPoll();
+        if (MP.players.filter(p=>!p.spectator).length < 2 || MP.players.some(p => !p.spectator && !p.ready)) { mpMsg('Everyone must press READY before the match can start.', true); mpRenderRoom(); return; }
         $('#mpStart').disabled = true;
         mpMsg('Starting…');
         await mpPoll();
@@ -7529,7 +7560,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             if (lb.data)
                 MP.hostId = lb.data.host_id;
             if (pl.data)
-                MP.players = pl.data.filter(p => !MP.gone.has(p.player_id));
+                MP.players = pl.data.filter(p => !MP.gone.has(p.player_id)); MP.ready = Object.fromEntries(MP.players.map(p=>[p.player_id,!!p.ready]));
             if (lb.data || pl.data) {
                 // The database's host_id is authoritative. Never promote a non-host client
                 // locally just because the recorded host is temporarily missing.
@@ -7601,8 +7632,10 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         return from;
     }
     async function mpApply(ev) {
-        if (ev.type === 'leave' && ev.player_id !== MP.pid)
-            MP.gone.add(ev.player_id);
+        if (ev.type === 'leave' && ev.player_id !== MP.pid) MP.gone.add(ev.player_id);
+        if (ev.type === 'announce') { const feed=$('#mpAnnouncementFeed'); if(feed) feed.textContent = (ev.payload && ev.payload.name ? ev.payload.name : 'HOST') + ': ' + String((ev.payload && ev.payload.text) || '').slice(0,120); say('LOBBY ANNOUNCEMENT',1200,'big'); return; }
+        if (ev.type === 'rematch_vote') { MP.rematchVotes[ev.player_id] = !!(ev.payload && ev.payload.yes); mpUpdateRematchUI(); if (MP.host) mpMaybeRematch(); return; }
+        if (ev.type === 'rematch_start') { await mpResetForRematch(ev.payload); return; }
         if (ev.type === 'start') {
             if (MP.started && MP.over)
                 MP.started = false;
@@ -7723,6 +7756,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         if (p.ver && p.ver !== S.loadNo + 1)
             return; // duplicate load
         S.loadNo = p.ver || S.loadNo + 1;
+        if (S.P[MP.pid] && !S.P[MP.pid].spectator) { const ms=SAVE.mpStats||(SAVE.mpStats={games:0,wins:0,losses:0,streak:0,best:0,rounds:0,items:0,shots:0,hits:0}); ms.rounds++; persist(); }
         S.shells = p.shells.slice();
         S.liveLeft = S.shells.filter(Boolean).length;
         S.blankLeft = S.shells.length - S.liveLeft;
@@ -7789,8 +7823,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
                 await sleep(500);
         }
         P.items[slot] = null;
-        if (pid === me)
-            rebuildItems();
+        if (pid === me) { const ms=SAVE.mpStats||(SAVE.mpStats={games:0,wins:0,losses:0,streak:0,best:0,rounds:0,items:0,shots:0,hits:0}); ms.items++; SAVE.itemUse=SAVE.itemUse||{}; SAVE.itemUse[t]=(SAVE.itemUse[t]||0)+1; persist(); rebuildItems(); }
         mpHUD();
         if (t === 'lens') {
             SFX.lens();
@@ -7871,6 +7904,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         if (!T || !T.alive || !A || !A.alive)
             return;
         const live = S.shells.shift();
+        if (shooter === me) { const ms=SAVE.mpStats||(SAVE.mpStats={games:0,wins:0,losses:0,streak:0,best:0,rounds:0,items:0,shots:0,hits:0}); ms.shots++; persist(); }
         live ? S.liveLeft-- : S.blankLeft--;
         const dmg = S.sawn ? 2 : 1, self = shooter === target;
         const nm = id => id === me ? 'You' : S.P[id].name;
@@ -7893,8 +7927,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             if (MP.fun.megaShake && T.hp >= 2) shake = .9;
             if (MP.fun.confetti) mpConfetti();
             const godT = !!(MP.flags[target] && MP.flags[target].god);
-            if (!godT)
-                T.hp = Math.max(0, T.hp - dmg);
+            if (!godT) { T.hp = Math.max(0, T.hp - dmg); if (shooter === me && target !== me) { const ms=SAVE.mpStats||(SAVE.mpStats={games:0,wins:0,losses:0,streak:0,best:0,rounds:0,items:0,shots:0,hits:0}); ms.hits++; persist(); } }
             if (!godT && (MP.fun.bouncy || MP.fun.pinball || MP.fun.spin || MP.fun.lowGravity))
                 mpStartBounce(target);
             if (target === me && !godT) {
@@ -7982,10 +8015,11 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             mpSend('gameover', { winner: winId || null });
         await sleep(700);
         const win = winId === MP.pid;
-        $('#card').innerHTML = `<h1 style="color:${win ? '#ffd24a' : '#b02020'}">${win ? 'YOU WIN' : 'MATCH OVER'}</h1><h2 id="mpWinner"></h2><p style="text-align:center">Thanks for playing.</p><button id="btnKeep">KEEP PLAYING</button> <button id="btnTitle">QUIT TO TITLE SCREEN</button>`;
+        { const ms=SAVE.mpStats||(SAVE.mpStats={games:0,wins:0,losses:0,streak:0,best:0,rounds:0,items:0,shots:0,hits:0}); ms.games++; if(win){ms.wins++;ms.streak++;ms.best=Math.max(ms.best,ms.streak);}else{ms.losses++;ms.streak=0;} persist(); mpRecordProfile(!!win); }
+        $('#card').innerHTML = `<h1 style="color:${win ? '#ffd24a' : '#b02020'}">${win ? 'YOU WIN' : 'MATCH OVER'}</h1><h2 id="mpWinner"></h2><p style="text-align:center">Would everyone like to play again?</p><div id="mpRematchStatus" class="mpNote" style="text-align:center">0/${MP.players.filter(p=>!p.spectator).length} votes received</div><button id="btnRematchYes">VOTE YES · REMATCH</button><button class="ghost" id="btnRematchNo">VOTE NO</button><button class="ghost" id="btnTitle">QUIT TO TITLE SCREEN</button>`;
         $('#mpWinner').textContent = (winId ? S.P[winId].name.toUpperCase() : 'NOBODY') + ' IS THE LAST ONE STANDING';
-        $('#overlay').style.display = 'flex';
-        $('#btnKeep').onclick = mpKeepPlaying;
+        $('#overlay').style.display = 'flex'; MP.rematchVotes={};
+        $('#btnRematchYes').onclick=()=>mpVoteRematch(true); $('#btnRematchNo').onclick=()=>mpVoteRematch(false);
         $('#btnTitle').onclick = mpQuitToTitle;
     }
     function mpKeepPlaying() {
@@ -8126,7 +8160,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             b.className = 'mpChip' + (S.turn === id && !MP.over ? ' turn' : '') + (P.alive ? '' : ' dead');
             const n = document.createElement('div');
             n.className = 'n';
-            n.textContent = P.name;
+            n.textContent = P.name; n.classList.add('profileName'); n.title='View player profile'; n.onclick=e=>{e.stopPropagation();mpOpenProfile(id,P.name);};
             const pp = document.createElement('div');
             pp.className = 'pips';
             let h = '';
@@ -8135,7 +8169,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             pp.innerHTML = h;
             const it = document.createElement('div');
             it.className = 'it';
-            it.textContent = P.items.filter(Boolean).map(t => ITEMS[t].icon).join(' ');
+            it.textContent = MP.fun.invisibleInventory ? '▰ ▰ ▰' : P.items.filter(Boolean).map(t => ITEMS[t].icon).join(' ');
             b.append(n, pp, it);
             b.disabled = !can || !P.alive;
             b.title = 'Shoot ' + P.name;
@@ -8157,6 +8191,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             mpItemsKey = '';
             return;
         }
+        if (MP.fun.invisibleInventory) { while (mpOtherItems.children.length) mpOtherItems.remove(mpOtherItems.children[0]); mpItemsKey = 'hidden'; return; }
         const key = MP.others.map(id => id + (MP.figs[id] ? 'f' : 'n') + ':' + (S.P[id].alive ? S.P[id].items.map(t => t || '-').join(',') : 'dead')).join('|');
         if (key === mpItemsKey)
             return;
@@ -8422,13 +8457,13 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             return;
         }
         const f = MP.fun || {};
-        for (const [id,key] of [['funBouncy','bouncy'],['funPinball','pinball'],['funSpin','spin'],['funLowGravity','lowGravity'],['funConfetti','confetti'],['funDisco','disco'],['funRain','rain'],['funGiant','giant'],['funTiny','tiny'],['funMegaShake','megaShake'],['funEndless','endless'],['funItemShuffle','itemShuffle']]) {
+        for (const [id,key] of [['funBouncy','bouncy'],['funPinball','pinball'],['funSpin','spin'],['funLowGravity','lowGravity'],['funConfetti','confetti'],['funDisco','disco'],['funRain','rain'],['funGiant','giant'],['funTiny','tiny'],['funMegaShake','megaShake'],['funEndless','endless'],['funItemShuffle','itemShuffle'],['funInvisibleInventory','invisibleInventory']]) {
             const el = $('#'+id); if (el) el.checked = !!f[key];
         }
         const power = $('#funPower'), duration = $('#funDuration');
         if (power) { power.value = f.power || 1.5; $('#funPowerVal').textContent = Number(power.value).toFixed(1)+'×'; }
         if (duration) { duration.value = f.duration || 4; $('#funDurationVal').textContent = Number(duration.value).toFixed(1)+'s'; }
-        try { mpFunVisuals(); } catch (e) { }
+        try { mpFunVisuals(); if(MP.S){mpItemsKey='';mpSyncOtherItems();mpHUD();} } catch (e) { }
     }
     function mpFunConfig() {
         if (!MP.code || !MP.sb || !(MP.host || SAVE.admin) || MP.started) {
@@ -8480,7 +8515,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
     if (funDuration) funDuration.addEventListener('input', () => { $('#funDurationVal').textContent = Number(funDuration.value).toFixed(1)+'s'; mpFunConfig(); });
     if (funReset) funReset.onclick = () => {
         if (!MP.code || !(MP.host || SAVE.admin) || MP.started) return;
-        MP.fun = {bouncy:false,pinball:false,spin:false,lowGravity:false,confetti:false,disco:false,rain:false,giant:false,tiny:false,megaShake:false,itemShuffle:true,power:1.5,duration:4};
+        MP.fun = {bouncy:false,pinball:false,spin:false,lowGravity:false,confetti:false,disco:false,rain:false,giant:false,tiny:false,megaShake:false,itemShuffle:true,invisibleInventory:false,power:1.5,duration:4};
         renderFunControls(); mpFunConfig();
     };
     renderFunControls();
@@ -8592,7 +8627,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             box.innerHTML = '';
             data.forEach(r => {
                 const row = document.createElement('div');
-                row.className = 'mpPubRow';
+                row.className = 'mpPubRow' + (h.rare?' rareHat':'');
                 const info = document.createElement('span');
                 info.textContent = (r.host_name || 'Host') + "'s lobby";
                 const sm = document.createElement('small');
@@ -8700,7 +8735,10 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         { id: 'cowboy', name: 'Cowboy Hat', price: 230, c1: 0xb98a52, c2: 0x5a3a22 },
         { id: 'tophat', name: 'Top Hat', price: 550, c1: 0x151515, c2: 0xb02020 },
         { id: 'witch', name: 'Witch Hat', price: 1000, c1: 0x4a2a6e, c2: 0x1a0e2a, c3: 0xffd24a },
-        { id: 'crown', name: 'Crown', price: 100000, c1: 0xffd24a, c2: 0xd01c3c, c3: 0xffd24a }
+        { id: 'crown', name: 'Crown', price: 100000, c1: 0xffd24a, c2: 0xd01c3c, c3: 0xffd24a },
+        {id:'astral_crown',name:'Astral Sovereign',rare:true,unlock:'Win 100 multiplayer matches',c1:0x8b5cff,c2:0x27e8ff,c3:0xffe28a},
+        {id:'void_halo',name:'Event Horizon',rare:true,unlock:'Reach a 25-win multiplayer streak',c1:0x160d35,c2:0xb36bff,c3:0x50eaff},
+        {id:'golden_dealer',name:'The Golden Dealer',rare:true,unlock:'Unlock every achievement',c1:0xffd24a,c2:0x9b5b16,c3:0xffffff}
     ];
     MP.hats = {};
     let _stripeTex = null;
@@ -8724,7 +8762,10 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         const m1 = mat(H.c1, { roughness: .8 }), m2 = mat(H.c2, { roughness: .7 }), m3 = mat(H.c3 || H.c2, { roughness: .35, metalness: .5 });
         const add = (geo, m, x, y, z) => mesh(geo, m, x, y, z, g, false);
         const CY = (rt, rb, h, sg = 22) => new THREE.CylinderGeometry(rt, rb, h, sg);
-        if (id === 'beanie') {
+        if (id === 'astral_crown') { add(new THREE.TorusGeometry(.34,.035,12,48),m3,0,.32,0).rotation.x=Math.PI/2; for(let i=0;i<12;i++){const a=i*Math.PI/6; add(new THREE.ConeGeometry(.07,.42,5),m1,Math.cos(a)*.29,.45,Math.sin(a)*.29).rotation.z=Math.cos(a)*-.35; add(new THREE.SphereGeometry(.045,10,8),m3,Math.cos(a)*.29,.68,Math.sin(a)*.29); } add(new THREE.SphereGeometry(.16,18,12),m2,0,.42,0); }
+        else if (id === 'void_halo') { const ring=add(new THREE.TorusGeometry(.43,.045,12,64),m3,0,.55,0); ring.rotation.x=Math.PI/2; const ring2=add(new THREE.TorusGeometry(.31,.025,10,48),m2,0,.62,0); ring2.rotation.x=Math.PI/2; for(let i=0;i<8;i++){const a=i*Math.PI/4;add(new THREE.SphereGeometry(.055,10,8),m1,Math.cos(a)*.43,.55,Math.sin(a)*.43);} }
+        else if (id === 'golden_dealer') { add(CY(.38,.32,.12,32),m3,0,.26,0); for(let i=0;i<9;i++){const a=i*Math.PI*2/9;add(new THREE.ConeGeometry(.075,.38,5),m1,Math.cos(a)*.32,.48,Math.sin(a)*.32).rotation.z=Math.cos(a)*-.3;} add(new THREE.TorusGeometry(.39,.025,8,40),m2,0,.31,0).rotation.x=Math.PI/2; }
+        else if (id === 'beanie') {
             add(new THREE.SphereGeometry(.34, 18, 10, 0, 6.283, 0, 1.7), m1, 0, .04, 0);
             add(new THREE.TorusGeometry(.33, .05, 8, 22), m2, 0, .08, 0).rotation.x = Math.PI / 2;
             add(new THREE.SphereGeometry(.07, 10, 8), m2, 0, .38, 0);
@@ -8794,7 +8835,10 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         const fe = (x, y, rx, ry, col) => { c.fillStyle = col; c.beginPath(); c.ellipse(x, y, rx, ry, 0, 0, 6.283); c.fill(); c.stroke(); };
         const fr = (x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); c.strokeRect(x, y, w, h); };
         const poly = (pts, col) => { c.fillStyle = col; c.beginPath(); c.moveTo(pts[0], pts[1]); for (let i = 2; i < pts.length; i += 2) c.lineTo(pts[i], pts[i + 1]); c.closePath(); c.fill(); c.stroke(); };
-        if (id === 'beanie') { c.fillStyle = c1; c.beginPath(); c.arc(150, 125, 100, Math.PI, 0); c.closePath(); c.fill(); c.stroke(); fr(48, 112, 204, 30, c2); fe(150, 20, 22, 22, c2); }
+        if (id === 'astral_crown') { c.strokeStyle=c1; c.lineWidth=18; c.beginPath(); c.ellipse(150,100,105,25,0,0,6.283); c.stroke(); for(let i=0;i<12;i++){const a=i*Math.PI/6; poly([150+Math.cos(a)*75,105+Math.sin(a)*18,150+Math.cos(a)*115,55+Math.sin(a)*30,150+Math.cos(a)*95,130+Math.sin(a)*18],c2);} fe(150,100,18,18,c3); }
+        else if (id === 'void_halo') { c.strokeStyle=c2; c.lineWidth=17; c.shadowColor=c2; c.shadowBlur=28; c.beginPath(); c.ellipse(150,95,112,27,-.12,0,6.283); c.stroke(); c.strokeStyle=c3; c.lineWidth=6; c.beginPath(); c.ellipse(150,95,80,18,.12,0,6.283); c.stroke(); c.shadowBlur=0; }
+        else if (id === 'golden_dealer') { poly([55,125,65,45,105,90,150,12,195,90,235,45,245,125],c1); fe(150,35,15,15,c3); fe(85,68,10,10,c3); fe(215,68,10,10,c3); fr(55,115,190,24,c2); }
+        else if (id === 'beanie') { c.fillStyle = c1; c.beginPath(); c.arc(150, 125, 100, Math.PI, 0); c.closePath(); c.fill(); c.stroke(); fr(48, 112, 204, 30, c2); fe(150, 20, 22, 22, c2); }
         else if (id === 'cap') {
             c.fillStyle = c1; c.beginPath(); c.arc(150, 125, 96, Math.PI, 0); c.closePath(); c.fill(); c.stroke();
             c.lineWidth = 3;
@@ -8827,26 +8871,24 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
         if (!box) return;
         if (!Array.isArray(SAVE.hats)) SAVE.hats = [];
         $('#hatBank').textContent = SAVE.admin ? '∞' : '$' + SAVE.bank;
-        box.innerHTML = '';
+        box.innerHTML = ''; const rareBox=$('#rareHatList'); if(rareBox) rareBox.innerHTML='';
         HATS.forEach(h => {
             const owned = SAVE.hats.includes(h.id), worn = SAVE.hat === h.id;
             const row = document.createElement('div');
-            row.className = 'mpPubRow';
+            row.className = 'mpPubRow' + (h.rare?' rareHat':'');
             const info = document.createElement('span');
             info.textContent = h.name;
             const sm = document.createElement('small');
-            sm.textContent = owned ? (worn ? 'Wearing' : 'Owned') : '$' + h.price;
+            sm.textContent = owned ? (worn ? 'Wearing' : 'Owned') : (h.rare ? h.unlock : '$' + h.price);
             info.appendChild(sm);
             const b = document.createElement('button');
             b.type = 'button';
-            b.textContent = worn ? 'TAKE OFF' : owned ? 'WEAR' : 'BUY';
-            if (!owned && !SAVE.admin && SAVE.bank < h.price) b.disabled = true;
-            b.onclick = () => hatAction(h.id);
-            row.appendChild(info);
-            row.appendChild(b);
-            box.appendChild(row);
+            b.textContent = worn ? 'TAKE OFF' : owned ? 'WEAR' : (h.rare ? 'LOCKED' : 'BUY');
+            if (h.rare && !owned) b.disabled = true; else if (!owned && !SAVE.admin && SAVE.bank < h.price) b.disabled = true;
+            b.onclick = () => hatAction(h.id); row.appendChild(info); row.appendChild(b); (h.rare && rareBox ? rareBox : box).appendChild(row);
         });
     }
+    function unlockRareHat(id){ if(!Array.isArray(SAVE.hats))SAVE.hats=[]; if(!SAVE.hats.includes(id)){SAVE.hats.push(id); persist(); try{renderHats();}catch(e){} } }
     function hatAction(id) {
         const h = HATS.find(x => x.id === id);
         if (!h) return;
@@ -8925,7 +8967,7 @@ html.mobile body.inLobby #btnPanel,html.mobile body.inLobby #adminPanel{display:
             n.textContent = P.name + (id === MP.pid ? ' (you)' : '') + '  ' + '♥'.repeat(P.hp);
             const it = document.createElement('span');
             it.className = 'it';
-            it.textContent = P.items.filter(Boolean).map(t => ITEMS[t].icon).join(' ');
+            it.textContent = MP.fun.invisibleInventory ? '▰ ▰ ▰' : P.items.filter(Boolean).map(t => ITEMS[t].icon).join(' ');
             b.append(n, it);
             b.onclick = () => mpShoot(id);
             box.appendChild(b);
